@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title desc">
+  <title id="title">ShopLedger application architecture</title>
+  <desc id="desc">Architecture map of the ShopLedger UI, Express routers, library modules, configuration and JSON data store, with order placement flow highlighted.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker>
+    <marker id="blueArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker>
+    <marker id="greenArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/></marker>
+    <style>
+      text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#172033}
+      .title{font-size:30px;font-weight:750}.subtitle{font-size:14px;fill:#64748b}
+      .group{font-size:15px;font-weight:700;letter-spacing:1.2px;fill:#475569}
+      .box-title{font-size:16px;font-weight:700}.small{font-size:12px;fill:#64748b}.body{font-size:13px;fill:#334155}
+      .step{font-size:12px;font-weight:750;fill:#fff;text-anchor:middle;dominant-baseline:central}
+      .panel{fill:#f8fafc;stroke:#cbd5e1;stroke-width:1.5}.node{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}
+      .blue{fill:#eff6ff;stroke:#60a5fa}.green{fill:#ecfdf5;stroke:#34d399}.amber{fill:#fffbeb;stroke:#fbbf24}
+      .line{fill:none;stroke:#64748b;stroke-width:2;marker-end:url(#arrow)}
+      .order-line{fill:none;stroke:#2563eb;stroke-width:3;marker-end:url(#blueArrow)}
+      .persist-line{fill:none;stroke:#059669;stroke-width:2.5;marker-end:url(#greenArrow)}
+      .dash{stroke-dasharray:7 6}
+    </style>
+  </defs>
+  <rect width="1600" height="1120" fill="#fff"/>
+  <text x="56" y="58" class="title">ShopLedger architecture</text>
+  <text x="57" y="84" class="subtitle">Express app · browser POS · JSON file persistence</text>
+
+  <!-- Browser UI -->
+  <rect x="55" y="125" width="280" height="910" rx="18" class="panel"/>
+  <text x="78" y="160" class="group">BROWSER UI</text>
+  <rect x="82" y="190" width="226" height="112" rx="12" class="node blue"/>
+  <text x="102" y="222" class="box-title">public/index.html</text>
+  <text x="102" y="247" class="body">POS, order register,</text><text x="102" y="267" class="body">khata and reports screens</text>
+  <rect x="82" y="326" width="226" height="105" rx="12" class="node blue"/>
+  <text x="102" y="358" class="box-title">public/js/app.js</text>
+  <text x="102" y="383" class="body">XHR requests and cart UI</text><text x="102" y="403" class="body">POST /api/orders</text>
+  <path d="M195 302 V326" class="line"/>
+  <rect x="82" y="470" width="226" height="120" rx="12" class="node"/>
+  <text x="102" y="502" class="box-title">Browser actions</text>
+  <text x="102" y="528" class="body">Select product quantities</text><text x="102" y="550" class="body">Preview → place order</text><text x="102" y="572" class="body">Refresh catalog and totals</text>
+  <path d="M195 431 V470" class="order-line"/>
+  <circle cx="195" cy="449" r="12" fill="#2563eb"/><text x="195" y="449" class="step">1</text>
+
+  <!-- API routes -->
+  <rect x="390" y="125" width="340" height="910" rx="18" class="panel"/>
+  <text x="415" y="160" class="group">EXPRESS ROUTERS · routes/</text>
+  <rect x="425" y="190" width="270" height="102" rx="12" class="node blue"/>
+  <text x="447" y="223" class="box-title">orders.js</text>
+  <text x="447" y="249" class="body">GET /orders, GET /orders/:id</text><text x="447" y="270" class="body">POST /orders, POST cancel</text>
+  <rect x="425" y="320" width="270" height="92" rx="12" class="node"/>
+  <text x="447" y="352" class="box-title">products.js</text><text x="447" y="379" class="body">GET /products · GET /coupons</text>
+  <rect x="425" y="440" width="270" height="92" rx="12" class="node"/>
+  <text x="447" y="472" class="box-title">customers.js</text><text x="447" y="499" class="body">GET /customers · POST settle</text>
+  <rect x="425" y="560" width="270" height="112" rx="12" class="node"/>
+  <text x="447" y="592" class="box-title">reports.js</text><text x="447" y="619" class="body">Dashboard · GST reconciliation</text><text x="447" y="641" class="body">Pricing preview · admin export</text>
+  <path d="M308 378 H425" class="order-line"/>
+  <circle cx="365" cy="378" r="12" fill="#2563eb"/><text x="365" y="378" class="step">2</text>
+  <path d="M308 375 C350 375 365 366 425 366" class="line dash"/>
+  <text x="356" y="345" class="small">other API calls</text>
+
+  <!-- Lib modules -->
+  <rect x="785" y="125" width="465" height="910" rx="18" class="panel"/>
+  <text x="810" y="160" class="group">BUSINESS LOGIC · lib/</text>
+  <rect x="820" y="190" width="185" height="98" rx="12" class="node blue"/>
+  <text x="839" y="223" class="box-title">orders.js</text><text x="839" y="250" class="body">Create, list, cancel</text>
+  <rect x="1030" y="190" width="185" height="98" rx="12" class="node blue"/>
+  <text x="1049" y="223" class="box-title">pricing.js</text><text x="1049" y="250" class="body">Totals and line tax</text>
+  <rect x="820" y="320" width="185" height="98" rx="12" class="node"/>
+  <text x="839" y="353" class="box-title">inventory.js</text><text x="839" y="380" class="body">Stock check, deduct</text>
+  <rect x="1030" y="320" width="185" height="98" rx="12" class="node"/>
+  <text x="1049" y="353" class="box-title">coupons.js</text><text x="1049" y="380" class="body">Validate, discount</text>
+  <rect x="820" y="450" width="185" height="98" rx="12" class="node"/>
+  <text x="839" y="483" class="box-title">ledger.js</text><text x="839" y="510" class="body">Khata, settlements</text>
+  <rect x="1030" y="450" width="185" height="98" rx="12" class="node"/>
+  <text x="1049" y="483" class="box-title">tax.js</text><text x="1049" y="510" class="body">HSN slabs, GST split</text>
+  <rect x="820" y="580" width="185" height="98" rx="12" class="node"/>
+  <text x="839" y="613" class="box-title">store.js</text><text x="839" y="640" class="body">Read/write db.json</text>
+  <rect x="1030" y="580" width="185" height="98" rx="12" class="node"/>
+  <text x="1049" y="613" class="box-title">reports.js</text><text x="1049" y="640" class="body">Dashboard, GST check</text>
+  <rect x="820" y="710" width="185" height="98" rx="12" class="node"/>
+  <text x="839" y="743" class="box-title">invoice.js</text><text x="839" y="770" class="body">Invoice figures + HTML</text>
+  <rect x="1030" y="710" width="185" height="98" rx="12" class="node"/>
+  <text x="1049" y="743" class="box-title">dates.js</text><text x="1049" y="770" class="body">Today, date keys, FY</text>
+
+  <!-- Flow from order route -->
+  <path d="M695 240 H820" class="order-line"/>
+  <circle cx="756" cy="240" r="12" fill="#2563eb"/><text x="756" y="240" class="step">3</text>
+  <path d="M912 288 V320" class="order-line"/>
+  <circle cx="912" cy="304" r="12" fill="#2563eb"/><text x="912" y="304" class="step">4</text>
+  <path d="M1005 369 H1030" class="line"/>
+  <path d="M1122 288 V320" class="line"/>
+  <path d="M912 418 V450" class="order-line"/>
+  <circle cx="912" cy="434" r="12" fill="#2563eb"/><text x="912" y="434" class="step">5</text>
+  <path d="M1005 499 C1070 499 1070 270 1030 250" class="line dash"/>
+  <path d="M1122 418 V450" class="line"/>
+  <path d="M912 548 V580" class="persist-line"/>
+  <circle cx="912" cy="564" r="12" fill="#059669"/><text x="912" y="564" class="step">6</text>
+  <path d="M1005 629 H1030" class="line"/>
+  <path d="M912 678 V710" class="line dash"/>
+  <path d="M1122 678 V710" class="line dash"/>
+  <text x="815" y="857" class="small">Order route calls inventory, pricing, coupons,</text>
+  <text x="815" y="877" class="small">ledger (for khata), orders and store.</text>
+  <text x="815" y="902" class="small">Pricing uses coupons.js + tax.js.</text>
+  <text x="815" y="927" class="small">Other routes use the corresponding lib modules.</text>
+
+  <!-- Runtime/config/data -->
+  <rect x="1300" y="125" width="245" height="910" rx="18" class="panel"/>
+  <text x="1324" y="160" class="group">RUNTIME &amp; DATA</text>
+  <rect x="1325" y="195" width="195" height="104" rx="12" class="node"/>
+  <text x="1345" y="228" class="box-title">server.js</text><text x="1345" y="254" class="body">Express app</text><text x="1345" y="276" class="body">mounts routes/</text>
+  <rect x="1325" y="350" width="195" height="128" rx="12" class="node amber"/>
+  <text x="1345" y="384" class="box-title">config.js</text><text x="1345" y="410" class="body">Port · shop details</text><text x="1345" y="432" class="body">Tax · inventory · coupons</text><text x="1345" y="454" class="body">Admin export key</text>
+  <rect x="1325" y="570" width="195" height="135" rx="12" class="node green"/>
+  <text x="1345" y="604" class="box-title">data/db.json</text><text x="1345" y="630" class="body">Products · customers</text><text x="1345" y="652" class="body">Orders · settlements</text><text x="1345" y="674" class="body">Audit log · ID counters</text>
+  <path d="M730 215 C900 130 1190 130 1325 235" class="line dash"/>
+  <text x="1000" y="143" class="small">routes mounted by</text>
+  <path d="M1325 405 H1268 V369 H1215" class="line dash"/>
+  <text x="1240" y="397" class="small">settings</text>
+  <path d="M1215 629 H1325" class="persist-line"/>
+  <path d="M1005 629 C1150 629 1190 650 1325 650" class="persist-line"/>
+  <text x="1260" y="612" class="small">file I/O</text>
+
+  <!-- Order legend -->
+  <rect x="390" y="945" width="840" height="64" rx="12" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="415" y="973" class="box-title" fill="#1d4ed8">Order placement</text>
+  <text x="415" y="994" class="body">1 cart in browser → 2 POST /api/orders → 3 resolve product + price → 4 stock check → 5 price, coupon/GST, optional khata → 6 save order, stock and audit log</text>
+  <path d="M620 292 C720 920 770 940 900 940" class="order-line dash"/>
+</svg>
